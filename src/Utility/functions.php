@@ -19,7 +19,7 @@
  *
  * @return bool
  */
-function enqueue($to, $cc = null, $bcc = null, $reply_to = null, array $data, array $options = [])
+function enqueue($to, array $data, array $options = [], $cc = null, $bcc = null, $reply_to = null)
 {
-    return \Cake\ORM\TableRegistry::get('EmailQueue.EmailQueue')->enqueue($to, $cc, $bcc, $reply_to, $data, $options);
+    return \Cake\ORM\TableRegistry::get('EmailQueue.EmailQueue')->enqueue($to, $data, $options, $cc, $bcc, $reply_to);
 }

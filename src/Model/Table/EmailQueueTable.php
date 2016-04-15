@@ -48,11 +48,11 @@ class EmailQueueTable extends Table
      * Stores a new email message in the queue.
      *
      * @param mixed|array $to           email or array of emails as recipients
+     * @param array $data    associative array of variables to be passed to the email template
+     * @param array $options list of options for email sending. Possible keys:
      * @param mixed|array $cc           email or array of emails as cc
      * @param mixed|array $bcc          email or array of emails as bcc
      * @param mixed|array $reply_to     email or array of emails as reply_to
-     * @param array $data    associative array of variables to be passed to the email template
-     * @param array $options list of options for email sending. Possible keys:
      *
      * - subject : Email's subject
      * - send_at : date time sting representing the time this email should be sent at (in UTC)
@@ -63,7 +63,7 @@ class EmailQueueTable extends Table
      *
      * @return bool
      */
-    public function enqueue($to, $cc = null, $bcc = null, $reply_to = null, array $data, array $options = [])
+    public function enqueue($to, array $data, array $options = [], $cc = null, $bcc = null, $reply_to = null)
     {
 
         $defaults = [
@@ -82,21 +82,25 @@ class EmailQueueTable extends Table
         if (!is_array($to)) {
             $to = [$to];
         }
-        if (!is_array($cc)) {
-            $cc = [$cc];
+        if ($cc) {
+            if (!is_array($cc)) {
+                $cc = [$cc];
+            }
+            $email['cc' => $cc];
         }
-        if (!is_array($bcc)) {
-            $bcc = [$bcc];
+        if ($bcc) {
+            if (!is_array($bcc)) {
+                $bcc = [$bcc];
+            }
+            $email['bcc' => $bcc];
         }
-        if (!is_array($reply_to)) {
-            $reply_to = [$reply_to];
+        if ($reply_to) {
+            if (!is_array($reply_to)) {
+                $reply_to = [$reply_to];
+            }
+            $email['reply_to' => $reply_to];
         }
-        $email[
-            'to'       => implode(',', $to),
-            'cc'       => implode(',', $cc),
-            'bcc'      => implode(',', $bcc),
-            'reply_to' => implode(',', $reply_to),
-        ];
+        $email['to' => implode(',', $to)];
 
         $email = $this->newEntity($email);
         dump($email);exit;
