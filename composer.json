@@ -1,0 +1,38 @@
+{
+    "name": "crabstudio/emailQueue",
+    "description": "EmailQueue plugin for CakePHP 3.x",
+    "keywords": ["cakephp", "cakephp 3", "email", "bulk email", "crabstudio", "anhtuank7c"],
+    "homepage": "https://github.com/crabstudio/emailqueue",
+    "license": "MIT",
+    "authors": [{
+        "name": "anhtuank7c",
+        "email": "anhtuank7c@hotmail.com"
+    }],
+    "support": {
+        "issues": "https://github.com/crabstudio/emailqueue/issues",
+        "source": "https://github.com/crabstudio/emailqueue"
+    },
+    "suggest": {
+        "crabstudio/recaptcha": "Allows you to use Google recaptcha",
+    },
+    "type": "cakephp-plugin",
+    "require": {
+        "php": ">=5.4.16",
+        "cakephp/cakephp": "~3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "EmailQueue\\": "src"
+        },
+        "files": ["src/Utility/functions.php"]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "EmailQueue\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    }
+}
