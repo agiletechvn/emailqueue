@@ -9,10 +9,10 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property string $from_email
  * @property string $from_name
- * @property string $to
- * @property string $cc
- * @property string $bcc
- * @property string $reply_to
+ * @property string $email_to
+ * @property string $email_cc
+ * @property string $email_bcc
+ * @property string $email_reply_to
  * @property string $subject
  * @property string $config
  * @property string $template

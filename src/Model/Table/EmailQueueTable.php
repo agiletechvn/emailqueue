@@ -1,14 +1,11 @@
 <?php
 namespace EmailQueue\Model\Table;
 
-use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Table;
-use EmailQueue\Database\Type\JsonType;
-use EmailQueue\Database\Type\SerializeType;
 
 /**
  * EmailQueue Model
@@ -30,9 +27,6 @@ class EmailQueueTable extends Table
         $this->table('email_queue');
         $this->displayField('subject');
         $this->primaryKey('id');
-
-        Type::map('email_queue.json', JsonType::class);
-        Type::map('email_queue.serialize', SerializeType::class);
 
         $this->addBehavior('Timestamp', [
             'events' => [
@@ -82,29 +76,26 @@ class EmailQueueTable extends Table
         if (!is_array($to)) {
             $to = [$to];
         }
+        $email['email_to'] = implode(',', $to);
         if ($cc) {
             if (!is_array($cc)) {
                 $cc = [$cc];
             }
-            $email['cc' => $cc];
+            $email['email_cc'] = implode(',', $cc);
         }
         if ($bcc) {
             if (!is_array($bcc)) {
                 $bcc = [$bcc];
             }
-            $email['bcc' => $bcc];
+            $email['email_bcc'] = implode(',', $bcc);
         }
         if ($reply_to) {
             if (!is_array($reply_to)) {
                 $reply_to = [$reply_to];
             }
-            $email['reply_to' => $reply_to];
+            $email['email_reply_to'] = implode(',', $reply_to);
         }
-        $email['to' => implode(',', $to)];
-
-        $email = $this->newEntity($email);
-        dump($email);exit;
-        return $this->save($email);
+        return $this->save($this->newEntity($email));
     }
 
     /**
@@ -192,10 +183,8 @@ class EmailQueueTable extends Table
      */
     protected function _initializeSchema(Schema $schema)
     {
-        $type = Configure::read('EmailQueue.serialization_type') ?: 'email_queue.serialize';
-        $schema->columnType('template_vars', $type);
-        $schema->columnType('headers', $type);
-
+        $schema->columnType('template_vars', 'email_queue.serialize');
+        $schema->columnType('headers', 'email_queue.serialize');
         return $schema;
     }
 }
