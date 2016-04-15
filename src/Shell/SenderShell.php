@@ -25,34 +25,34 @@ class SenderShell extends Shell
     {
         $parser = parent::getOptionParser();
         $parser
-            ->description(__('Sends queued emails in a batch'))
+            ->description('Sends queued emails in a batch')
             ->addOption('limit', array(
                 'short'   => 'l',
-                'help'    => __('How many emails should be sent in this batch?'),
+                'help'    => 'How many emails should be sent in this batch?',
                 'default' => 50,
             ))
             ->addOption('template', array(
                 'short'   => 't',
-                'help'    => __('Name of the template to be used to render email'),
+                'help'    => 'Name of the template to be used to render email',
                 'default' => 'default',
             ))
             ->addOption('layout', array(
                 'short'   => 'w',
-                'help'    => __('Name of the layout to be used to wrap template'),
+                'help'    => 'Name of the layout to be used to wrap template',
                 'default' => 'default',
             ))
             ->addOption('stagger', array(
                 'short'   => 's',
-                'help'    => __('Seconds to maximum wait randomly before proceeding (useful for parallel executions)'),
+                'help'    => 'Seconds to maximum wait randomly before proceeding (useful for parallel executions)',
                 'default' => false,
             ))
             ->addOption('config', array(
                 'short'   => 'c',
-                'help'    => __('Name of email settings to use as defined in email.php'),
+                'help'    => 'Name of email settings to use as defined in email.php',
                 'default' => 'default',
             ))
             ->addSubCommand('clearLocks', array(
-                'help' => __('Clears all locked emails in the queue, useful for recovering from crashes'),
+                'help' => 'Clears all locked emails in the queue, useful for recovering from crashes',
             ));
 
         return $parser;

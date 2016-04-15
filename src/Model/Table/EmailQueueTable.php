@@ -43,11 +43,12 @@ class EmailQueueTable extends Table
      *
      * @param mixed|array $to           email or array of emails as recipients
      * @param array $data    associative array of variables to be passed to the email template
-     * @param array $options list of options for email sending. Possible keys:
-     * @param mixed|array $cc           email or array of emails as cc
-     * @param mixed|array $bcc          email or array of emails as bcc
-     * @param mixed|array $reply_to     email or array of emails as reply_to
+     * @param array $options list of options for email sending.
+     * @param null|mixed|array $cc           null or email or array of emails as cc
+     * @param null|mixed|array $bcc          null or email or array of emails as bcc
+     * @param null|mixed|array $reply_to     null or email or array of emails as reply_to
      *
+     * $options Possible keys:
      * - subject : Email's subject
      * - send_at : date time sting representing the time this email should be sent at (in UTC)
      * - template :  the name of the element to use as template for the email message
