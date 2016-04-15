@@ -13,7 +13,7 @@
         "source": "https://github.com/crabstudio/emailqueue"
     },
     "suggest": {
-        "crabstudio/recaptcha": "Allows you to use Google recaptcha",
+        "crabstudio/recaptcha": "Allows you to use Google recaptcha"
     },
     "type": "cakephp-plugin",
     "require": {
