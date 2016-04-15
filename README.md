@@ -3,6 +3,7 @@
 ## Note
 
 This plugin base on [Lorenzo cakephp-email-queue](https://github.com/lorenzo/cakephp-email-queue) but with little bit different:
+
 	- Sent to `one|multiple` people
 	- CC to `none|one|multiple` people
 	- BCC to `none|one|multiple` people
