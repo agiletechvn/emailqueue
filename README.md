@@ -7,7 +7,7 @@ This plugin base on [Lorenzo cakephp-email-queue](https://github.com/lorenzo/cak
 	- Sent to `one|multiple` people
 	- CC to `none|one|multiple` people
 	- BCC to `none|one|multiple` people
-	- Use full url path in view
+	- Included helpers `Html, Text, Number`
 
 ## Installation
 

@@ -81,6 +81,7 @@ class SenderShell extends Shell
             $layout     = $e->layout === 'default' ? $this->params['layout'] : $e->layout;
             $headers    = empty($e->headers) ? array() : (array) $e->headers;
             $theme      = empty($e->theme) ? '' : (string) $e->theme;
+            $helpers    = ['Html', 'Text', 'Number'];
             $from_email = null;
             $from_name  = null;
 
@@ -102,6 +103,7 @@ class SenderShell extends Shell
                     ->emailFormat($e->format)
                     ->addHeaders($headers)
                     ->theme($theme)
+                    ->helpers($helpers)
                     ->viewVars($e->template_vars)
                     ->messageId(false)
                     ->returnPath($email->from());
