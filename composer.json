@@ -1,5 +1,5 @@
 {
-    "name": "crabstudio/emailQueue",
+    "name": "crabstudio/email-queue",
     "description": "EmailQueue plugin for CakePHP 3.x",
     "keywords": ["cakephp", "cakephp 3", "email", "bulk email", "crabstudio", "anhtuank7c"],
     "homepage": "https://github.com/crabstudio/emailqueue",
