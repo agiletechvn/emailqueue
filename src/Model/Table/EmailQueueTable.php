@@ -139,7 +139,7 @@ class EmailQueueTable extends Table
      */
     public function releaseLocks($ids)
     {
-        $this->updateAll(['locked' => false], ['id IN' => $ids]);
+        $this->updateAll(['locked' => false, 'modified' => new FrozenTime('now')], ['id IN' => $ids]);
     }
 
     /**
@@ -147,7 +147,7 @@ class EmailQueueTable extends Table
      */
     public function clearLocks()
     {
-        $this->updateAll(['locked' => false], '1=1');
+        $this->updateAll(['locked' => false, 'modified' => new FrozenTime('now')], '1=1');
     }
 
     /**
@@ -157,21 +157,23 @@ class EmailQueueTable extends Table
      *
      * @return bool
      */
-    public function success($id)
+    public function success($id, $from_email, $from_name)
     {
-        $this->updateAll(['sent' => true], ['id' => $id]);
+        $this->updateAll(['sent' => true, 'from_email' => $from_email, 'from_name' => $from_name, 'modified' => new FrozenTime('now')], ['id' => $id]);
     }
 
     /**
      * Marks an email from the queue as failed, and increments the number of tries.
      *
      * @param string $id, queued email id
+     * @param string from_email, queued email from_email
+     * @param string from_name, queued email from_name
      *
      * @return bool
      */
-    public function fail($id)
+    public function fail($id, $from_email, $from_name)
     {
-        $this->updateAll(['send_tries' => new QueryExpression('send_tries + 1')], ['id' => $id]);
+        $this->updateAll(['send_tries' => new QueryExpression('send_tries + 1'), 'from_email' => $from_email, 'from_name' => $from_name, 'modified' => new FrozenTime('now')], ['id' => $id]);
     }
 
     /**

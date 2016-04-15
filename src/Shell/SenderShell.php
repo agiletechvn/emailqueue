@@ -81,25 +81,22 @@ class SenderShell extends Shell
             $layout     = $e->layout === 'default' ? $this->params['layout'] : $e->layout;
             $headers    = empty($e->headers) ? array() : (array) $e->headers;
             $theme      = empty($e->theme) ? '' : (string) $e->theme;
+            $from_email = null;
+            $from_name  = null;
 
             try {
                 $email = $this->_newEmail($configName);
-
                 if (!empty($e->from_email) && !empty($e->from_name)) {
                     $email->from($e->from_email, $e->from_name);
                 }
 
                 $transport = $email->transport();
-
                 if ($transport && $transport->config('additionalParameters')) {
                     $from = key($email->from());
                     $transport->config(['additionalParameters' => "-f $from"]);
                 }
-
                 $sent = $email
-                    ->to(explode(',', $e->to))
-                    ->cc(explode(',', $e->cc))
-                    ->bcc(explode(',', $e->bcc))
+                    ->to($e->email_to)
                     ->subject($e->subject)
                     ->template($template, $layout)
                     ->emailFormat($e->format)
@@ -107,18 +104,34 @@ class SenderShell extends Shell
                     ->theme($theme)
                     ->viewVars($e->template_vars)
                     ->messageId(false)
-                    ->returnPath($email->from())
-                    ->send();
+                    ->returnPath($email->from());
+                if ($e->email_cc) {
+                    $sent->addCc(explode(',', $e->email_cc));
+                }
+                if ($e->email_bcc) {
+                    $sent->addBcc(explode(',', $e->email_bcc));
+                }
+                if ($e->email_reply_to) {
+                    $sent->replyTo(explode(',', $e->email_reply_to));
+                }
+                if (get_class($transport) === 'Cake\Mailer\Transport\SmtpTransport') {
+                    $from_email = $from_name = $transport->config()['username'];
+                } else {
+                    foreach ($sent->from() as $k => $v) {
+                        $from_email = $k;
+                        $from_name  = $v;
+                    }
+                }
+                $sent = $sent->send();
             } catch (SocketException $exception) {
                 $this->err($exception->getMessage());
                 $sent = false;
             }
-
             if ($sent) {
-                $emailQueue->success($e->id);
+                $emailQueue->success($e->id, $from_email, $from_email);
                 $this->out('<success>Email ' . $e->id . ' was sent</success>');
             } else {
-                $emailQueue->fail($e->id);
+                $emailQueue->fail($e->id, $from_email, $from_email);
                 $this->out('<error>Email ' . $e->id . ' was not sent</error>');
             }
         }

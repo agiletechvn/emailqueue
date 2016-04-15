@@ -23,7 +23,7 @@ use Cake\ORM\Entity;
  * @property string $headers
  * @property bool $sent
  * @property bool $locked
- * @property int $send_retries
+ * @property int $send_tries
  * @property \Cake\I18n\Time $send_at
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified

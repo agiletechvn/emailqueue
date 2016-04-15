@@ -1,0 +1,44 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2016-04-15 18:23+0700\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: src/Shell/SenderShell.php:28
+msgid "Sends queued emails in a batch"
+msgstr ""
+
+#: src/Shell/SenderShell.php:31
+msgid "How many emails should be sent in this batch?"
+msgstr ""
+
+#: src/Shell/SenderShell.php:36
+msgid "Name of the template to be used to render email"
+msgstr ""
+
+#: src/Shell/SenderShell.php:41
+msgid "Name of the layout to be used to wrap template"
+msgstr ""
+
+#: src/Shell/SenderShell.php:46
+msgid "Seconds to maximum wait randomly before proceeding (useful for parallel executions)"
+msgstr ""
+
+#: src/Shell/SenderShell.php:51
+msgid "Name of email settings to use as defined in email.php"
+msgstr ""
+
+#: src/Shell/SenderShell.php:55
+msgid "Clears all locked emails in the queue, useful for recovering from crashes"
+msgstr ""
+
