@@ -1,3 +1,4 @@
+[![Latest Stable Version](https://poser.pugx.org/crabstudio/email-queue/v/stable)](https://packagist.org/packages/crabstudio/email-queue) [![Total Downloads](https://poser.pugx.org/crabstudio/email-queue/downloads)](https://packagist.org/packages/crabstudio/email-queue) [![Latest Unstable Version](https://poser.pugx.org/crabstudio/email-queue/v/unstable)](https://packagist.org/packages/crabstudio/email-queue) [![License](https://poser.pugx.org/crabstudio/email-queue/license)](https://packagist.org/packages/crabstudio/email-queue)
 # EmailQueue plugin for CakePHP 3
 
 ## Note
