@@ -28,6 +28,23 @@ or paste this line to the end of `config/bootstrap.php`
 ```
 Plugin::load('EmailQueue', ['bootstrap' => true]);
 ```
+
+## Create required table
+
+2 way to do it
+
+### Use Migration tool
+
+```
+bin/cake migrations migrate --plugin EmailQueue
+```
+
+### Load sql file into your database
+
+```
+sql file located at: config/schema/email_queue.sql
+```
+
 ## Usage
 
 ### Call `enqueue` function anywhere you want to store new email in the queue.
@@ -39,9 +56,6 @@ Plugin::load('EmailQueue', ['bootstrap' => true]);
  * @param mixed|array $to           email or array of emails as recipients
  * @param array $data    associative array of variables to be passed to the email template
  * @param array $options list of options for email sending.
- * @param null|mixed|array $cc           null or email or array of emails as cc
- * @param null|mixed|array $bcc          null or email or array of emails as bcc
- * @param null|mixed|array $reply_to     null or email or array of emails as reply_to
  *
  * $options Possible keys:
  * - subject : Email's subject
@@ -50,10 +64,46 @@ Plugin::load('EmailQueue', ['bootstrap' => true]);
  * - layout : the name of the layout to be used to wrap email message
  * - format: Type of template to use (html, text or both)
  * - config : the name of the email config to be used for sending
+ * @param null|mixed|array $cc           null or email or array of emails as cc
+ * @param null|mixed|array $bcc          null or email or array of emails as bcc
+ * @param null|mixed|array $reply_to     null or email or array of emails as reply_to
  *
  * @return bool
  */
 enqueue($to, array $data, array $options = [], $cc = null, $bcc = null, $reply_to = null)
+```
+
+Example
+
+```
+// In src/PostsController.php
+
+publuc function send_email($id) {
+	$post = $this->Posts->get($id);
+	$result = enqueue(
+		'customer@crabstudio.info',
+		[
+			'post' => $post,
+			'request' => $this->request
+		],
+		[
+			'subject' => __('New post notification'),
+			'format' => 'html',
+			'template' => 'Post/new_post_notification',  // src/Template/Email/html/Post/new_post_notification.ctp
+			'layout' => 'notification' //src/Template/Layout/Email/html/notification.ctp
+			'config' => 'default',
+
+		],
+		'cc_to_me@crabstudio.info',
+		'bcc_to_you@crabstudio.info',
+		'reply_to_support@crabstudio.info'
+	);
+	if ($result) {
+		$this->Flash->success(__('Enqueue email ok'));
+	} else {
+		$this->Flash->error(__('Enqueue email not ok'));
+	}
+}
 ```
 
 ### Schedule task
