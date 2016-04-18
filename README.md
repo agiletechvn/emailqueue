@@ -119,7 +119,3 @@ Open `crontab` then setup cronjob like this:
 #### Windows:
 
 Open `Task Scheduler` then follow [this tutorial](http://www.digitalcitizen.life/how-create-task-basic-task-wizard)
-
-### Report
-
-You can look at `logs/email-queue.log` file.
