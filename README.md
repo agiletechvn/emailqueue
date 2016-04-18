@@ -89,8 +89,8 @@ publuc function send_email($id) {
 		[
 			'subject' => __('New post notification'),
 			'format' => 'html',
-			'template' => 'Post/new_post_notification',  // src/Template/Email/html/Post/new_post_notification.ctp
-			'layout' => 'notification' //src/Template/Layout/Email/html/notification.ctp
+			'template' => 'Post/new_post_notification',  //template located here src/Template/Email/html/Post/new_post_notification.ctp
+			'layout' => 'notification' //layout located here src/Template/Layout/Email/html/notification.ctp
 			'config' => 'default',
 
 		],
