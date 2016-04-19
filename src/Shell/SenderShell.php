@@ -81,7 +81,7 @@ class SenderShell extends Shell
             $layout     = $e->layout === 'default' ? $this->params['layout'] : $e->layout;
             $headers    = empty($e->headers) ? array() : (array) $e->headers;
             $theme      = empty($e->theme) ? '' : (string) $e->theme;
-            $helpers    = ['Html', 'Text', 'Number'];
+            $helpers    = ['Html', 'Text', 'Number', 'Url'];
             $from_email = null;
             $from_name  = null;
 
