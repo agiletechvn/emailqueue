@@ -113,9 +113,6 @@ class SenderShell extends Shell
                 if ($e->email_bcc) {
                     $sent->addBcc(explode(',', $e->email_bcc));
                 }
-                if ($e->email_reply_to) {
-                    $sent->replyTo(explode(',', $e->email_reply_to));
-                }
                 if (get_class($transport) === 'Cake\Mailer\Transport\SmtpTransport') {
                     $from_email = $from_name = $transport->config()['username'];
                 } else {
@@ -123,6 +120,11 @@ class SenderShell extends Shell
                         $from_email = $k;
                         $from_name  = $v;
                     }
+                }
+                if ($e->email_reply_to) {
+                    $sent->replyTo(explode(',', $e->email_reply_to));
+                } else {
+                    $sent->replyTo($from_email, $from_name);
                 }
                 $sent = $sent->send();
             } catch (SocketException $exception) {
