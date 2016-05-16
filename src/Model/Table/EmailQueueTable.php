@@ -31,7 +31,7 @@ class EmailQueueTable extends Table
         $this->addBehavior('Timestamp', [
             'events' => [
                 'Model.beforeSave' => [
-                    'created'  => 'new',
+                    'created' => 'new',
                     'modified' => 'existing',
                 ],
             ],
@@ -46,7 +46,7 @@ class EmailQueueTable extends Table
      * @param array $options list of options for email sending.
      * @param null|mixed|array $cc           null or email or array of emails as cc
      * @param null|mixed|array $bcc          null or email or array of emails as bcc
-     * @param null|mixed|array $reply_to     null or email or array of emails as reply_to
+     * @param null|mixed|array $replyTo     null or email or array of emails as replyTo
      *
      * $options Possible keys:
      * - subject : Email's subject
@@ -58,19 +58,18 @@ class EmailQueueTable extends Table
      *
      * @return bool
      */
-    public function enqueue($to, array $data, array $options = [], $cc = null, $bcc = null, $reply_to = null)
+    public function enqueue($to, array $data, array $options = [], $cc = null, $bcc = null, $replyTo = null)
     {
-
         $defaults = [
-            'subject'       => '',
-            'send_at'       => new FrozenTime('now'),
-            'template'      => 'default',
-            'layout'        => 'default',
-            'theme'         => '',
-            'format'        => 'both',
-            'headers'       => [],
+            'subject' => '',
+            'send_at' => new FrozenTime('now'),
+            'template' => 'default',
+            'layout' => 'default',
+            'theme' => '',
+            'format' => 'both',
+            'headers' => [],
             'template_vars' => $data,
-            'config'        => 'default',
+            'config' => 'default',
         ];
 
         $email = $options + $defaults;
@@ -90,20 +89,18 @@ class EmailQueueTable extends Table
             }
             $email['email_bcc'] = implode(',', $bcc);
         }
-        if ($reply_to) {
-            if (!is_array($reply_to)) {
-                $reply_to = [$reply_to];
+        if ($replyTo) {
+            if (!is_array($replyTo)) {
+                $replyTo = [$replyTo];
             }
-            $email['email_reply_to'] = implode(',', $reply_to);
+            $email['email_reply_to'] = implode(',', $replyTo);
         }
         return $this->save($this->newEntity($email));
     }
 
     /**
      * Returns a list of queued emails that needs to be sent.
-     *
-     * @param int $size, number of unset emails to return
-     *
+     * @param int $size number of unset emails to return
      * @return array list of unsent emails
      */
     public function getBatch($size = 10)
@@ -111,10 +108,10 @@ class EmailQueueTable extends Table
         return $this->connection()->transactional(function () use ($size) {
             $emails = $this->find()
                 ->where([
-                    $this->aliasField('sent')               => false,
+                    $this->aliasField('sent') => false,
                     $this->aliasField('send_tries') . ' <=' => 3,
-                    $this->aliasField('send_at') . ' <='    => new FrozenTime('now'),
-                    $this->aliasField('locked')             => false,
+                    $this->aliasField('send_at') . ' <=' => new FrozenTime('now'),
+                    $this->aliasField('locked') => false,
                 ])
                 ->limit($size)
                 ->order([$this->aliasField('created') => 'ASC']);
@@ -137,6 +134,7 @@ class EmailQueueTable extends Table
      * Releases locks for all emails in $ids.
      *
      * @param array|Traversable $ids The email ids to unlock
+     * @return void
      */
     public function releaseLocks($ids)
     {
@@ -145,36 +143,37 @@ class EmailQueueTable extends Table
 
     /**
      * Releases locks for all emails in queue, useful for recovering from crashes.
+     * @return bool
      */
     public function clearLocks()
     {
-        $this->updateAll(['locked' => false, 'modified' => new FrozenTime('now')], '1=1');
+        return $this->updateAll(['locked' => false, 'modified' => new FrozenTime('now')], '1=1');
     }
 
     /**
      * Marks an email from the queue as sent.
-     *
-     * @param string $id, queued email id
-     *
+     * @param string $id queued email id
+     * @param string $fromEmail from email
+     * @param string $fromName from name
      * @return bool
      */
-    public function success($id, $from_email, $from_name)
+    public function success($id, $fromEmail, $fromName)
     {
-        $this->updateAll(['sent' => true, 'from_email' => $from_email, 'from_name' => $from_name, 'modified' => new FrozenTime('now')], ['id' => $id]);
+        return $this->updateAll(['sent' => true, 'from_email' => $fromEmail, 'from_name' => $fromName, 'modified' => new FrozenTime('now')], ['id' => $id]);
     }
 
     /**
      * Marks an email from the queue as failed, and increments the number of tries.
      *
-     * @param string $id, queued email id
-     * @param string from_email, queued email from_email
-     * @param string from_name, queued email from_name
+     * @param string $id queued email id
+     * @param string $fromEmail queued email fromEmail
+     * @param string $fromName queued email fromName
      *
      * @return bool
      */
-    public function fail($id, $from_email, $from_name)
+    public function fail($id, $fromEmail, $fromName)
     {
-        $this->updateAll(['send_tries' => new QueryExpression('send_tries + 1'), 'from_email' => $from_email, 'from_name' => $from_name, 'modified' => new FrozenTime('now')], ['id' => $id]);
+        return $this->updateAll(['send_tries' => new QueryExpression('send_tries + 1'), 'from_email' => $fromEmail, 'from_name' => $fromName, 'modified' => new FrozenTime('now')], ['id' => $id]);
     }
 
     /**

@@ -26,34 +26,34 @@ class SenderShell extends Shell
         $parser = parent::getOptionParser();
         $parser
             ->description('Sends queued emails in a batch')
-            ->addOption('limit', array(
-                'short'   => 'l',
-                'help'    => 'How many emails should be sent in this batch?',
+            ->addOption('limit', [
+                'short' => 'l',
+                'help' => 'How many emails should be sent in this batch?',
                 'default' => 50,
-            ))
-            ->addOption('template', array(
-                'short'   => 't',
-                'help'    => 'Name of the template to be used to render email',
+            ])
+            ->addOption('template', [
+                'short' => 't',
+                'help' => 'Name of the template to be used to render email',
                 'default' => 'default',
-            ))
-            ->addOption('layout', array(
-                'short'   => 'w',
-                'help'    => 'Name of the layout to be used to wrap template',
+            ])
+            ->addOption('layout', [
+                'short' => 'w',
+                'help' => 'Name of the layout to be used to wrap template',
                 'default' => 'default',
-            ))
-            ->addOption('stagger', array(
-                'short'   => 's',
-                'help'    => 'Seconds to maximum wait randomly before proceeding (useful for parallel executions)',
+            ])
+            ->addOption('stagger', [
+                'short' => 's',
+                'help' => 'Seconds to maximum wait randomly before proceeding (useful for parallel executions)',
                 'default' => false,
-            ))
-            ->addOption('config', array(
-                'short'   => 'c',
-                'help'    => 'Name of email settings to use as defined in email.php',
+            ])
+            ->addOption('config', [
+                'short' => 'c',
+                'help' => 'Name of email settings to use as defined in email.php',
                 'default' => 'default',
-            ))
-            ->addSubCommand('clearLocks', array(
+            ])
+            ->addSubCommand('clearLocks', [
                 'help' => 'Clears all locked emails in the queue, useful for recovering from crashes',
-            ));
+            ]);
 
         return $parser;
     }
@@ -72,23 +72,23 @@ class SenderShell extends Shell
 
         Configure::write('App.baseUrl', '/');
         $emailQueue = TableRegistry::get('EmailQueue', ['className' => EmailQueueTable::class]);
-        $emails     = $emailQueue->getBatch($this->params['limit']);
+        $emails = $emailQueue->getBatch($this->params['limit']);
 
         $count = count($emails);
         foreach ($emails as $e) {
             $configName = $e->config === 'default' ? $this->params['config'] : $e->config;
-            $template   = $e->template === 'default' ? $this->params['template'] : $e->template;
-            $layout     = $e->layout === 'default' ? $this->params['layout'] : $e->layout;
-            $headers    = empty($e->headers) ? array() : (array) $e->headers;
-            $theme      = empty($e->theme) ? '' : (string) $e->theme;
-            $helpers    = ['Html', 'Text', 'Number', 'Url'];
-            $from_email = null;
-            $from_name  = null;
+            $template = $e->template === 'default' ? $this->params['template'] : $e->template;
+            $layout = $e->layout === 'default' ? $this->params['layout'] : $e->layout;
+            $headers = empty($e->headers) ? [] : (array)$e->headers;
+            $theme = empty($e->theme) ? '' : (string)$e->theme;
+            $helpers = ['Html', 'Text', 'Number', 'Url'];
+            $fromEmail = null;
+            $fromName = null;
 
             try {
                 $email = $this->_newEmail($configName);
-                if (!empty($e->from_email) && !empty($e->from_name)) {
-                    $email->from($e->from_email, $e->from_name);
+                if (!empty($e->fromEmail) && !empty($e->fromName)) {
+                    $email->from($e->fromEmail, $e->fromName);
                 }
 
                 $transport = $email->transport();
@@ -97,7 +97,7 @@ class SenderShell extends Shell
                     $transport->config(['additionalParameters' => "-f $from"]);
                 }
                 $sent = $email
-                    ->to($e->email_to)
+                    ->to($e->emailTo)
                     ->subject($e->subject)
                     ->template($template, $layout)
                     ->emailFormat($e->format)
@@ -107,24 +107,24 @@ class SenderShell extends Shell
                     ->viewVars($e->template_vars)
                     ->messageId(false)
                     ->returnPath($email->from());
-                if ($e->email_cc) {
-                    $sent->addCc(explode(',', $e->email_cc));
+                if ($e->emailCc) {
+                    $sent->addCc(explode(',', $e->emailCc));
                 }
-                if ($e->email_bcc) {
-                    $sent->addBcc(explode(',', $e->email_bcc));
+                if ($e->emailBcc) {
+                    $sent->addBcc(explode(',', $e->emailBcc));
                 }
                 if (get_class($transport) === 'Cake\Mailer\Transport\SmtpTransport') {
-                    $from_email = $from_name = $transport->config()['username'];
+                    $fromEmail = $fromName = $transport->config()['username'];
                 } else {
                     foreach ($sent->from() as $k => $v) {
-                        $from_email = $k;
-                        $from_name  = $v;
+                        $fromEmail = $k;
+                        $fromName = $v;
                     }
                 }
-                if ($e->email_reply_to) {
-                    $sent->replyTo(explode(',', $e->email_reply_to));
+                if ($e->emailReplyTo) {
+                    $sent->replyTo(explode(',', $e->emailReplyTo));
                 } else {
-                    $sent->replyTo($from_email, $from_name);
+                    $sent->replyTo($fromEmail, $fromName);
                 }
                 $sent = $sent->send();
             } catch (SocketException $exception) {
@@ -132,20 +132,21 @@ class SenderShell extends Shell
                 $sent = false;
             }
             if ($sent) {
-                $emailQueue->success($e->id, $from_email, $from_email);
+                $emailQueue->success($e->id, $fromEmail, $fromEmail);
                 $this->out('<success>Email ' . $e->id . ' was sent</success>');
             } else {
-                $emailQueue->fail($e->id, $from_email, $from_email);
+                $emailQueue->fail($e->id, $fromEmail, $fromEmail);
                 $this->out('<error>Email ' . $e->id . ' was not sent</error>');
             }
         }
         if ($count > 0) {
             $emailQueue->releaseLocks(collection($emails)->extract('id')->toList());
         }
-
+        return $send;
     }
     /**
      * Clears all locked emails in the queue, useful for recovering from crashes.
+     * @return void
      **/
     public function clearLocks()
     {
@@ -154,7 +155,7 @@ class SenderShell extends Shell
 
     /**
      * Returns a new instance of CakeEmail.
-     *
+     * @param array $config config
      * @return Email
      **/
     protected function _newEmail($config)
