@@ -61,7 +61,7 @@ class SenderShell extends Shell
     /**
      * main() method.
      *
-     * @return bool|int Success or error code.
+     * @return void
      */
     public function main()
     {
@@ -87,8 +87,8 @@ class SenderShell extends Shell
 
             try {
                 $email = $this->_newEmail($configName);
-                if (!empty($e->fromEmail) && !empty($e->fromName)) {
-                    $email->from($e->fromEmail, $e->fromName);
+                if (!empty($e->from_email) && !empty($e->from_name)) {
+                    $email->from($e->from_email, $e->from_name);
                 }
 
                 $transport = $email->transport();
@@ -97,7 +97,7 @@ class SenderShell extends Shell
                     $transport->config(['additionalParameters' => "-f $from"]);
                 }
                 $sent = $email
-                    ->to($e->emailTo)
+                    ->to($e->email_to)
                     ->subject($e->subject)
                     ->template($template, $layout)
                     ->emailFormat($e->format)
@@ -107,11 +107,11 @@ class SenderShell extends Shell
                     ->viewVars($e->template_vars)
                     ->messageId(false)
                     ->returnPath($email->from());
-                if ($e->emailCc) {
-                    $sent->addCc(explode(',', $e->emailCc));
+                if ($e->email_cc) {
+                    $sent->addCc(explode(',', $e->email_cc));
                 }
-                if ($e->emailBcc) {
-                    $sent->addBcc(explode(',', $e->emailBcc));
+                if ($e->email_bcc) {
+                    $sent->addBcc(explode(',', $e->email_bcc));
                 }
                 if (get_class($transport) === 'Cake\Mailer\Transport\SmtpTransport') {
                     $fromEmail = $fromName = $transport->config()['username'];
@@ -121,8 +121,8 @@ class SenderShell extends Shell
                         $fromName = $v;
                     }
                 }
-                if ($e->emailReplyTo) {
-                    $sent->replyTo(explode(',', $e->emailReplyTo));
+                if ($e->email_reply_to) {
+                    $sent->replyTo(explode(',', $e->email_reply_to));
                 } else {
                     $sent->replyTo($fromEmail, $fromName);
                 }
@@ -142,7 +142,6 @@ class SenderShell extends Shell
         if ($count > 0) {
             $emailQueue->releaseLocks(collection($emails)->extract('id')->toList());
         }
-        return $send;
     }
     /**
      * Clears all locked emails in the queue, useful for recovering from crashes.
