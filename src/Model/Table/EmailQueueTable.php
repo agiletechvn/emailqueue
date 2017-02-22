@@ -95,6 +95,7 @@ class EmailQueueTable extends Table
             }
             $email['email_reply_to'] = implode(',', $replyTo);
         }
+
         return $this->save($this->newEntity($email));
     }
 
@@ -187,6 +188,7 @@ class EmailQueueTable extends Table
     {
         $schema->columnType('template_vars', 'email_queue.serialize');
         $schema->columnType('headers', 'email_queue.serialize');
+
         return $schema;
     }
 }
