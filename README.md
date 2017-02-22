@@ -79,7 +79,7 @@ Example
 ```
 // In src/PostsController.php
 
-publuc function send_email($id) {
+public function send_email($id) {
 	$post = $this->Posts->get($id);
 	$result = enqueue(
 		'customer@crabstudio.info',
